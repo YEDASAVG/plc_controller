@@ -37,7 +37,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueMoi,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.11.1";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -1353141025;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 302069432;
 
 // Section: executor
 
@@ -109,7 +109,7 @@ fn wire__crate__api__simple__init_app_impl(
         },
     )
 }
-fn wire__crate__api__simple__read_coils_impl(
+fn wire__crate__api__simple__read_relays_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -117,7 +117,7 @@ fn wire__crate__api__simple__read_coils_impl(
 ) {
     FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec, _, _, _>(
         flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "read_coils",
+            debug_name: "read_relays",
             port: Some(port_),
             mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
         },
@@ -132,14 +132,12 @@ fn wire__crate__api__simple__read_coils_impl(
             let mut deserializer =
                 flutter_rust_bridge::for_generated::SseDeserializer::new(message);
             let api_ip = <String>::sse_decode(&mut deserializer);
-            let api_start = <u16>::sse_decode(&mut deserializer);
             let api_count = <u16>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| async move {
                 transform_result_sse::<_, String>(
                     (move || async move {
-                        let output_ok =
-                            crate::api::simple::read_coils(api_ip, api_start, api_count).await?;
+                        let output_ok = crate::api::simple::read_relays(api_ip, api_count).await?;
                         Ok(output_ok)
                     })()
                     .await,
@@ -148,7 +146,7 @@ fn wire__crate__api__simple__read_coils_impl(
         },
     )
 }
-fn wire__crate__api__simple__set_coil_impl(
+fn wire__crate__api__simple__set_relay_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -156,7 +154,7 @@ fn wire__crate__api__simple__set_coil_impl(
 ) {
     FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec, _, _, _>(
         flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "set_coil",
+            debug_name: "set_relay",
             port: Some(port_),
             mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
         },
@@ -171,14 +169,14 @@ fn wire__crate__api__simple__set_coil_impl(
             let mut deserializer =
                 flutter_rust_bridge::for_generated::SseDeserializer::new(message);
             let api_ip = <String>::sse_decode(&mut deserializer);
-            let api_address = <u16>::sse_decode(&mut deserializer);
+            let api_index = <u16>::sse_decode(&mut deserializer);
             let api_value = <bool>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| async move {
                 transform_result_sse::<_, String>(
                     (move || async move {
                         let output_ok =
-                            crate::api::simple::set_coil(api_ip, api_address, api_value).await?;
+                            crate::api::simple::set_relay(api_ip, api_index, api_value).await?;
                         Ok(output_ok)
                     })()
                     .await,
@@ -265,8 +263,8 @@ fn pde_ffi_dispatcher_primary_impl(
     // Codec=Pde (Serialization + dispatch), see doc to use other codecs
     match func_id {
         2 => wire__crate__api__simple__init_app_impl(port, ptr, rust_vec_len, data_len),
-        3 => wire__crate__api__simple__read_coils_impl(port, ptr, rust_vec_len, data_len),
-        4 => wire__crate__api__simple__set_coil_impl(port, ptr, rust_vec_len, data_len),
+        3 => wire__crate__api__simple__read_relays_impl(port, ptr, rust_vec_len, data_len),
+        4 => wire__crate__api__simple__set_relay_impl(port, ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
 }

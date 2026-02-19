@@ -13,7 +13,7 @@ pub fn greet(name: String) -> String {
     format!("Hello, {}! Controller is ready", name)
 }
 
-pub async fn set_coil(ip: String, address: u16, value: bool) -> Result<(), String> {
+pub async fn set_relay(ip: String, index: u16, value: bool) -> Result<(), String> {
     let socket_addr: SocketAddr = ip
     .parse()
     .map_err(|e| format!("Invalid IP address: {}", e))?;
@@ -22,16 +22,19 @@ pub async fn set_coil(ip: String, address: u16, value: bool) -> Result<(), Strin
     .await
     .map_err(|e| format!("Connection failed: {}", e))?;
 
-    ctx.write_single_coil(address, value)
+    let register_address = 1024 + index; // %MW0 = 1024, %MW1 = 1025, etc. most imp
+    let register_value: u16 = if value { 1 } else { 0 };
+
+    ctx.write_single_register(register_address, register_value)
     .await
     .map_err(|e| format!("Write failed: {}", e))?
-    .map_err(|e| format!("Modbus exception: {:?}", e))?;
+    .map_err(|e| format!("Modbus Exception: {:?}", e))?;
     Ok(())
 }
 
 // read the state of multiple relays 
 
-pub async fn read_coils(ip: String, start: u16, count: u16) -> Result<Vec<bool>, String> {
+pub async fn read_relays(ip: String, count: u16) -> Result<Vec<bool>, String> {
     let socket_addr: SocketAddr = ip
     .parse()
     .map_err(|e| format!("Invalid IP address: {}", e))?;
@@ -40,10 +43,12 @@ pub async fn read_coils(ip: String, start: u16, count: u16) -> Result<Vec<bool>,
     .await
     .map_err(|e| format!("Connection failed: {}", e))?;
 
-    let response = ctx.read_coils(start, count)
+    let response = ctx.read_holding_registers(1028, count)  // %MW4-7 = actual state feedback
     .await
     .map_err(|e| format!("Read failed: {}", e))?
     .map_err(|e| format!("Modbus exception: {:?}", e))?;
 
-    Ok(response)
+    // Convert register values (u16) to booleans: 0=false, anything else=true
+    let states: Vec<bool> = response.iter().map(|v| *v > 0).collect();
+    Ok(states)
 }

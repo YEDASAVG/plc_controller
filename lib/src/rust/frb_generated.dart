@@ -66,7 +66,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.11.1';
 
   @override
-  int get rustContentHash => -1353141025;
+  int get rustContentHash => 302069432;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -81,15 +81,14 @@ abstract class RustLibApi extends BaseApi {
 
   Future<void> crateApiSimpleInitApp();
 
-  Future<List<bool>> crateApiSimpleReadCoils({
+  Future<List<bool>> crateApiSimpleReadRelays({
     required String ip,
-    required int start,
     required int count,
   });
 
-  Future<void> crateApiSimpleSetCoil({
+  Future<void> crateApiSimpleSetRelay({
     required String ip,
-    required int address,
+    required int index,
     required bool value,
   });
 }
@@ -153,9 +152,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       const TaskConstMeta(debugName: "init_app", argNames: []);
 
   @override
-  Future<List<bool>> crateApiSimpleReadCoils({
+  Future<List<bool>> crateApiSimpleReadRelays({
     required String ip,
-    required int start,
     required int count,
   }) {
     return handler.executeNormal(
@@ -163,7 +161,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
           sse_encode_String(ip, serializer);
-          sse_encode_u_16(start, serializer);
           sse_encode_u_16(count, serializer);
           pdeCallFfi(
             generalizedFrbRustBinding,
@@ -176,22 +173,20 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           decodeSuccessData: sse_decode_list_bool,
           decodeErrorData: sse_decode_String,
         ),
-        constMeta: kCrateApiSimpleReadCoilsConstMeta,
-        argValues: [ip, start, count],
+        constMeta: kCrateApiSimpleReadRelaysConstMeta,
+        argValues: [ip, count],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiSimpleReadCoilsConstMeta => const TaskConstMeta(
-    debugName: "read_coils",
-    argNames: ["ip", "start", "count"],
-  );
+  TaskConstMeta get kCrateApiSimpleReadRelaysConstMeta =>
+      const TaskConstMeta(debugName: "read_relays", argNames: ["ip", "count"]);
 
   @override
-  Future<void> crateApiSimpleSetCoil({
+  Future<void> crateApiSimpleSetRelay({
     required String ip,
-    required int address,
+    required int index,
     required bool value,
   }) {
     return handler.executeNormal(
@@ -199,7 +194,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
           sse_encode_String(ip, serializer);
-          sse_encode_u_16(address, serializer);
+          sse_encode_u_16(index, serializer);
           sse_encode_bool(value, serializer);
           pdeCallFfi(
             generalizedFrbRustBinding,
@@ -212,16 +207,16 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           decodeSuccessData: sse_decode_unit,
           decodeErrorData: sse_decode_String,
         ),
-        constMeta: kCrateApiSimpleSetCoilConstMeta,
-        argValues: [ip, address, value],
+        constMeta: kCrateApiSimpleSetRelayConstMeta,
+        argValues: [ip, index, value],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiSimpleSetCoilConstMeta => const TaskConstMeta(
-    debugName: "set_coil",
-    argNames: ["ip", "address", "value"],
+  TaskConstMeta get kCrateApiSimpleSetRelayConstMeta => const TaskConstMeta(
+    debugName: "set_relay",
+    argNames: ["ip", "index", "value"],
   );
 
   @protected

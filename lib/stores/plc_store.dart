@@ -44,8 +44,12 @@ abstract class PlcStoreBase with Store {
 
     try {
       final newValue = !relayStates[index];
-      await _plcService.setCoil(index, newValue);
-      relayStates[index] = newValue;
+      await _plcService.setRelay(index, newValue);
+      // Read actual states from PLC (interlock may override our command)
+      final states = await _plcService.readRelays(0, 4);
+      for (int i = 0; i < states.length; i++) {
+        relayStates[i] = states[i];
+      }
       isConnected = true;
       statusMessage = 'Connected to $plcAddress';
     } catch (e) {
@@ -60,7 +64,7 @@ abstract class PlcStoreBase with Store {
   @action
   Future<void> refreshStates() async {
     try {
-      final states = await _plcService.readCoils(0, 4);
+      final states = await _plcService.readRelays(0, 4);
       for (int i = 0; i < states.length; i++) {
         relayStates[i] = states[i];
       }

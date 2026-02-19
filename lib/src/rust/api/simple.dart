@@ -9,22 +9,15 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 String greet({required String name}) =>
     RustLib.instance.api.crateApiSimpleGreet(name: name);
 
-Future<void> setCoil({
+Future<void> setRelay({
   required String ip,
-  required int address,
+  required int index,
   required bool value,
-}) => RustLib.instance.api.crateApiSimpleSetCoil(
+}) => RustLib.instance.api.crateApiSimpleSetRelay(
   ip: ip,
-  address: address,
+  index: index,
   value: value,
 );
 
-Future<List<bool>> readCoils({
-  required String ip,
-  required int start,
-  required int count,
-}) => RustLib.instance.api.crateApiSimpleReadCoils(
-  ip: ip,
-  start: start,
-  count: count,
-);
+Future<List<bool>> readRelays({required String ip, required int count}) =>
+    RustLib.instance.api.crateApiSimpleReadRelays(ip: ip, count: count);
