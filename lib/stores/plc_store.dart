@@ -36,6 +36,7 @@ abstract class PlcStoreBase with Store {
     plcAddress = newAddress;
     _plcService = PlcService(ip: plcAddress);
     statusMessage = 'IP updated to $plcAddress';
+    refreshStates();
   }
 
   @action

@@ -25,15 +25,31 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _showSettingsDialog() {
     final controller = TextEditingController(text: _store.plcAddress);
+    final formKey = GlobalKey<FormState>();
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('PLC Settings'),
-        content: TextField(
-          controller: controller,
-          decoration: const InputDecoration(
-            labelText: 'PLC IP Address',
-            hintText: '192.168.1.100:502',
+        content: Form(
+          key: formKey,
+          child: TextFormField(
+            controller: controller,
+            decoration: const InputDecoration(
+              labelText: 'PLC IP Address',
+              hintText: '192.168.1.100:502',
+            ),
+            validator: (value) {
+              if (value == null || value.isEmpty) return 'Address is required';
+              final parts = value.split(':');
+              if (parts.length != 2) return 'Format: IP:PORT (e.g. 192.168.0.103:502)';
+              final ipParts = parts[0].split('.');
+              if (ipParts.length != 4 || ipParts.any((p) => int.tryParse(p) == null || int.parse(p) > 255 || int.parse(p) < 0)) {
+                return 'Invalid IP address';
+              }
+              final port = int.tryParse(parts[1]);
+              if (port == null || port < 1 || port > 65535) return 'Invalid port (1-65535)';
+              return null;
+            },
           ),
         ),
         actions: [
@@ -43,8 +59,10 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           ElevatedButton(
             onPressed: () {
-              _store.updatePlcAddress(controller.text);
-              Navigator.pop(context);
+              if (formKey.currentState!.validate()) {
+                _store.updatePlcAddress(controller.text);
+                Navigator.pop(context);
+              }
             },
             child: const Text('Save'),
           ),
