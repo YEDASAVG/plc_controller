@@ -14,7 +14,7 @@ abstract class PlcStoreBase with Store {
   late PlcService _plcService;
 
   @observable
-  String plcAddress = '192.168.0.103:502';
+  String plcAddress = '192.168.0.105:502';
 
   @observable
   ObservableList<bool> relayStates = ObservableList.of([false, false, false, false]);
