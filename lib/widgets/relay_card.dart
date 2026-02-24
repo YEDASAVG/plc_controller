@@ -18,7 +18,8 @@ class RelayCard extends StatefulWidget {
   State<RelayCard> createState() => _RelayCardState();
 }
 
-class _RelayCardState extends State<RelayCard> with SingleTickerProviderStateMixin {
+class _RelayCardState extends State<RelayCard>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
 
@@ -29,9 +30,10 @@ class _RelayCardState extends State<RelayCard> with SingleTickerProviderStateMix
       duration: const Duration(milliseconds: 150),
       vsync: this,
     );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.95).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.95,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -45,10 +47,7 @@ class _RelayCardState extends State<RelayCard> with SingleTickerProviderStateMix
     return AnimatedBuilder(
       animation: _scaleAnimation,
       builder: (context, child) {
-        return Transform.scale(
-          scale: _scaleAnimation.value,
-          child: child,
-        );
+        return Transform.scale(scale: _scaleAnimation.value, child: child);
       },
       child: GestureDetector(
         onTapDown: (_) => _controller.forward(),
@@ -98,14 +97,14 @@ class _RelayCardState extends State<RelayCard> with SingleTickerProviderStateMix
                 ),
               // Content
               Padding(
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.all(16),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     // Power icon with ring
                     Container(
-                      width: 72,
-                      height: 72,
+                      width: 60,
+                      height: 60,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(
@@ -128,7 +127,7 @@ class _RelayCardState extends State<RelayCard> with SingleTickerProviderStateMix
                               color: Colors.white,
                             ),
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 10),
                     // Relay number
                     Text(
                       'RELAY ${widget.relayNumber}',
@@ -139,11 +138,14 @@ class _RelayCardState extends State<RelayCard> with SingleTickerProviderStateMix
                         color: Colors.white.withOpacity(0.8),
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 6),
                     // Status pill
                     AnimatedContainer(
                       duration: const Duration(milliseconds: 200),
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 6,
+                      ),
                       decoration: BoxDecoration(
                         color: widget.isOn
                             ? Colors.white

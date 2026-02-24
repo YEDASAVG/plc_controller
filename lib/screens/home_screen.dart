@@ -41,13 +41,21 @@ class _HomeScreenState extends State<HomeScreen> {
             validator: (value) {
               if (value == null || value.isEmpty) return 'Address is required';
               final parts = value.split(':');
-              if (parts.length != 2) return 'Format: IP:PORT (e.g. 192.168.0.103:502)';
+              if (parts.length != 2)
+                return 'Format: IP:PORT (e.g. 192.168.0.103:502)';
               final ipParts = parts[0].split('.');
-              if (ipParts.length != 4 || ipParts.any((p) => int.tryParse(p) == null || int.parse(p) > 255 || int.parse(p) < 0)) {
+              if (ipParts.length != 4 ||
+                  ipParts.any(
+                    (p) =>
+                        int.tryParse(p) == null ||
+                        int.parse(p) > 255 ||
+                        int.parse(p) < 0,
+                  )) {
                 return 'Invalid IP address';
               }
               final port = int.tryParse(parts[1]);
-              if (port == null || port < 1 || port > 65535) return 'Invalid port (1-65535)';
+              if (port == null || port < 1 || port > 65535)
+                return 'Invalid port (1-65535)';
               return null;
             },
           ),
@@ -76,7 +84,8 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Observer(
-          builder: (_) => Text('PLC Controller (${_store.activeRelayCount}/4 ON)'),
+          builder: (_) =>
+              Text('PLC Controller (${_store.activeRelayCount}/4 ON)'),
         ),
         centerTitle: true,
         actions: [
@@ -100,8 +109,8 @@ class _HomeScreenState extends State<HomeScreen> {
               width: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
-                color: _store.isConnected 
-                    ? Colors.green.shade900.withOpacity(0.3) 
+                color: _store.isConnected
+                    ? Colors.green.shade900.withOpacity(0.3)
                     : Colors.orange.shade900.withOpacity(0.3),
                 border: Border(
                   bottom: BorderSide(
@@ -114,7 +123,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   Icon(
                     _store.isConnected ? Icons.check_circle : Icons.warning,
-                    color: _store.isConnected ? Colors.green.shade400 : Colors.orange.shade400,
+                    color: _store.isConnected
+                        ? Colors.green.shade400
+                        : Colors.orange.shade400,
                     size: 20,
                   ),
                   const SizedBox(width: 8),
@@ -122,7 +133,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Text(
                       _store.statusMessage,
                       style: TextStyle(
-                        color: _store.isConnected ? Colors.green.shade300 : Colors.orange.shade300,
+                        color: _store.isConnected
+                            ? Colors.green.shade300
+                            : Colors.orange.shade300,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -140,7 +153,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   crossAxisCount: 2,
                   crossAxisSpacing: 16,
                   mainAxisSpacing: 16,
-                  childAspectRatio: 1,
+                  childAspectRatio: 0.85,
                 ),
                 itemCount: 4,
                 itemBuilder: (context, index) {
